@@ -1,0 +1,23 @@
+{
+  "triggers": [
+    {
+      "type": "triggers.Once",
+      "env": {
+
+      },
+      "jobs": [
+        {
+          "name": "",
+          "commands": [],
+          "dependsOn": [],
+          "frontend": "true",
+          "env": {
+
+          }
+        }
+      ]
+    }
+  ],
+  "env": {
+  }
+}

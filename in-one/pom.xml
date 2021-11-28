@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>daltao</groupId>
+        <artifactId>pipeline</artifactId>
+        <version>0.1.0</version>
+    </parent>
+
+    <groupId>daltao</groupId>
+    <artifactId>in-one</artifactId>
+    <version>0.1.0</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>daltao</groupId>
+            <artifactId>cpp-inline</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>daltao</groupId>
+            <artifactId>scheduler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>daltao</groupId>
+            <artifactId>file-export</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>daltao</groupId>
+            <artifactId>util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>daltao</groupId>
+            <artifactId>competitive-companion-tester</artifactId>
+        </dependency>
+    </dependencies>
+</project>

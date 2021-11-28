@@ -1,0 +1,79 @@
+{
+  "schedulerId": "cp",
+  "triggers": [
+    {
+      "name": "Competitive-Companion-Listener",
+      "type": "scheduler.triggers.Web",
+      "env": {
+        "port": "50823"
+      },
+      "jobs": [
+        {
+          "name": "write-down",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "ExportEnv"
+          ],
+          "dependsOn": [],
+          "frontend": true,
+          "env": {
+            "output": "${task-json}",
+            "body": "${_request_body}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Exe-File-Monitor",
+      "type": "scheduler.triggers.FileEvent",
+      "env": {
+        "filename": "${exe}",
+        "interval": 1000
+      },
+      "jobs": [
+        {
+          "name": "verify",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "Tester"
+          ],
+          "dependsOn": [],
+          "frontend": "true",
+          "env": {
+            "ignore-interactive": "true",
+            "commands": "${exe}",
+            "task-json": "${task-json}",
+            "time-out": "10000"
+          }
+        },
+        {
+          "name": "inline",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "CppInline"
+          ],
+          "dependsOn": [],
+          "frontend": true,
+          "env": {
+            "main-file": "${main-file}",
+            "inline-file": "${inline-file}"
+          }
+        }
+      ]
+    }
+  ],
+  "env": {
+    "work-space": "C:/Users/dalt/Desktop/top",
+    "main-file": "${work-space}/main.cpp",
+    "inline-file": "${work-space}/inline.cpp",
+    "exe": "${work-space}/main.exe",
+    "task-json": "${work-space}/stage/task.json",
+    "cp": "F:/sourcecode/pipelien/libs"
+  }
+}
