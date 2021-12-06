@@ -1,3 +1,8 @@
 utils\IOUtils.class
-utils\RegexUtils.class
+utils\CommandUtils.class
+utils\FileUtils.class
+utils\JsonUtils.class
+utils\ReflectUtils.class
+utils\StringUtils.class
 utils\Console.class
+utils\ErrorUtils.class

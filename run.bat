@@ -1,0 +1,1 @@
+java -cp libs/* scheduler.Scheduler "./cp-scheduler.json"

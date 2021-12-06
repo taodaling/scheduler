@@ -1,0 +1,195 @@
+{
+  "schedulerId": "cp",
+  "triggers": [
+    {
+      "name": "Daily Scheduler",
+      "type": "scheduler.triggers.Periodical",
+      "env": {
+        "interval": "86400000"
+      },
+      "jobs": [
+
+      ]
+    },
+    {
+      "name": "Competitive-Companion-Listener",
+      "type": "scheduler.triggers.Web",
+      "env": {
+        "port": "50823",
+        "rust-src": "${rust-main-proj}/src/"
+      },
+      "jobs": [
+        {
+          "name": "Archive task.json",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "MoveFile",
+            "${task-json}",
+            "${archive-folder}/${_execution_date}.json"
+          ],
+          "dependsOn": [],
+          "frontend": true
+        },
+        {
+          "name": "Generate task.json",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "ExportEnv"
+          ],
+          "dependsOn": ["Archive task.json?"],
+          "frontend": true,
+          "env": {
+            "output": "${task-json}",
+            "body": "${_request_body}"
+          }
+        },
+        {
+          "name": "Back up main.rs",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "CopyFile",
+            "${rust-src}/main.rs",
+            "${rust-src}/main.rs.bak"
+          ],
+          "dependsOn": ["Generate task.json"],
+          "frontend": true
+        },
+        {
+          "name": "Archive main.rs",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "MoveFile",
+            "${rust-src}/main.rs",
+            "${archive-folder}/${_execution_date}.rs"
+          ],
+          "dependsOn": ["Back up main.rs"],
+          "frontend": true
+        },
+        {
+          "name": "Recover main.rs",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "CopyFile",
+            "${work-space}/rust/main.rs",
+            "${rust-src}/main.rs"
+          ],
+          "dependsOn": ["Archive main.rs"],
+          "frontend": true
+        }
+      ]
+    },
+    {
+      "name": "Exe-File-Monitor",
+      "type": "scheduler.triggers.FileEvent",
+      "env": {
+        "filenames": "${exe}",
+        "interval": 1000
+      },
+      "jobs": [
+        {
+          "name": "verify",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "Tester"
+          ],
+          "dependsOn": [],
+          "frontend": "true",
+          "env": {
+            "ignore-interactive": "true",
+            "commands": "${_changed_filepath}",
+            "task-json": "${task-json}",
+            "time-out": "10000"
+          }
+        },
+        {
+          "name": "inline-cpp",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "CppInline"
+          ],
+          "dependsOn": [],
+          "frontend": false,
+          "env": {
+            "main-file": "${cpp-main-file}",
+            "inline-file": "${cpp-inline-file}"
+          }
+        },
+        {
+          "name": "inline-rust",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "RustInline",
+            "${rust-main-proj}",
+            "${rust-main-proj}/inline.rs"
+          ],
+          "dependsOn": [],
+          "frontend": true
+        },
+        {
+          "name": "copy rust inline to fort",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "CopyFile",
+            "${rust-main-proj}/inline.rs",
+            "${rust-work-space}/fort/src/main.rs"
+          ],
+          "dependsOn": ["inline-rust"],
+          "frontend": true
+        },
+        {
+          "name": "format fort",
+          "commands": [
+            "rustfmt",
+            "${rust-work-space}/fort/src/main.rs"
+          ],
+          "dependsOn": ["copy rust inline to fort"],
+          "frontend": true
+        },
+        {
+          "name": "move-rust-inline",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "MoveFile",
+            "${rust-main-proj}/inline.rs",
+            "${rust-inline-file}"
+          ],
+          "dependsOn": ["copy rust inline to fort"],
+          "frontend": true
+        }
+      ]
+    }
+  ],
+  "env": {
+    "cpp-work-space": "F:/geany",
+    "cpp-main-file": "${cpp-work-space}/main.cpp",
+    "cpp-inline-file": "${work-space}/cpp/inline.cpp",
+    "rust-work-space": "F:/sourcecode/rustcp",
+    "rust-main-proj": "${rust-work-space}/contest",
+    "rust-inline-file": "${work-space}/rust/inline.rs",
+    "exe": "${cpp-work-space}/main.exe,${rust-work-space}/target/debug/contest.exe",
+    "work-space": "D:/competitve-programming",
+    "archive-folder": "${work-space}/archive",
+    "task-json": "${work-space}/tasks/task.json",
+    "cp": "F:/sourcecode/pipelien/libs"
+  }
+}

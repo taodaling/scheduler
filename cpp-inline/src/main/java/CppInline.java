@@ -1,5 +1,5 @@
 import utils.FileUtils;
-import utils.RegexUtils;
+import utils.StringUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,7 +32,7 @@ public class CppInline {
         }
         set.add(file);
         String content = FileUtils.readFile(file).replaceAll("#pragma\\s+once", "");
-        return RegexUtils.replace(content, pattern, m -> {
+        return StringUtils.replace(content, pattern, m -> {
             String header = m.group(1);
             List<String> paths = new ArrayList<>();
             paths.add(FileUtils.concatPath(file.getParent(), header));

@@ -25,19 +25,20 @@ public class Tester {
             return;
         }
         ExecutorService executor = Executors.newCachedThreadPool();
-        List<Future<String>> jobs = new ArrayList<>();
+        List<Future<Output>> jobs = new ArrayList<>();
         for (Test test : task.getTests()) {
-            jobs.add(executor.submit(new Callable<String>() {
+            jobs.add(executor.submit(new Callable<Output>() {
                 @Override
-                public String call() throws Exception {
+                public Output call() throws Exception {
                     Process pb = new ProcessBuilder(commands).start();
                     org.apache.commons.io.IOUtils.write(test.getInput(), pb.getOutputStream());
                     pb.getOutputStream().flush();
                     String s = IOUtils.readAll(pb.getInputStream());
+                    String err = IOUtils.readAll(pb.getErrorStream());
                     if (pb.exitValue() != 0) {
                         return null;
                     }
-                    return s;
+                    return new Output(s, err);
                 }
             }));
         }
@@ -49,13 +50,15 @@ public class Tester {
         String failInput = null;
         String failOutput = null;
         String failExpect = null;
+        String failErr = null;
         for (int i = 0; i < jobs.size(); i++) {
-            Future<String> future = jobs.get(i);
+            Future<Output> future = jobs.get(i);
             if (!future.isDone()) {
                 console.blue("" + i + "\t: TIMEOUT");
                 if (failInput == null) {
                     failInput = task.getTests().get(i).getInput();
                     failOutput = "";
+                    failErr = "";
                     failExpect = task.getTests().get(i).getOutput();
                 }
 
@@ -65,15 +68,17 @@ public class Tester {
                 if (failInput == null) {
                     failInput = task.getTests().get(i).getInput();
                     failOutput = "";
+                    failErr = "";
                     failExpect = task.getTests().get(i).getOutput();
                 }
             } else {
-                if (match(task.getTests().get(i).getOutput(), future.get())) {
+                if (match(task.getTests().get(i).getOutput(), future.get().stdout)) {
                     console.green("" + i + "\t: PASSED");
                 } else {
                     console.red("" + i + "\t: WRONG ANSWER");
                     failInput = task.getTests().get(i).getInput();
-                    failOutput = future.get();
+                    failOutput = future.get().stdout;
+                    failErr = future.get().stderr;
                     failExpect = task.getTests().get(i).getOutput();
                 }
             }
@@ -90,6 +95,9 @@ public class Tester {
             System.out.println("Output:");
             System.out.println(failOutput);
             System.out.println();
+            System.out.println("Err:");
+            System.out.println(failErr);
+            System.out.println();
             System.exit(1);
         }
     }
@@ -100,5 +108,15 @@ public class Tester {
         String[] asplice = pattern.split(a);
         String[] bsplice = pattern.split(b);
         return Arrays.equals(asplice, bsplice);
+    }
+
+    static class Output {
+        String stdout;
+        String stderr;
+
+        public Output(String stdout, String stderr) {
+            this.stdout = stdout;
+            this.stderr = stderr;
+        }
     }
 }

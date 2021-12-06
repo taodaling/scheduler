@@ -1,11 +1,9 @@
 package scheduler.context;
 
-import com.google.common.base.Function;
-import utils.RegexUtils;
+import utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Context implements Cloneable {
@@ -52,7 +50,7 @@ public class Context implements Cloneable {
         }
 
         boolean[] find = new boolean[1];
-        s = RegexUtils.replace(s, pattern, m -> {
+        s = StringUtils.replace(s, pattern, m -> {
            String text = m.group(1);
            find[0] = true;
            return get(text);

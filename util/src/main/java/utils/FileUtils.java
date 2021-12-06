@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Consumer;
 
 public class FileUtils {
     public static void createFolder(File file) {
@@ -55,5 +56,14 @@ public class FileUtils {
 
     public static void write(String file, String content) {
         write(new File(file), content);
+    }
+
+    public static void visitFile(File file, Consumer<File> consumer){
+        if(file.isDirectory()){
+            for(File sub : file.listFiles()){
+                visitFile(sub, consumer);
+            }
+        }
+        consumer.accept(file);
     }
 }

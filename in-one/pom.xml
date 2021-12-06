@@ -35,5 +35,9 @@
             <groupId>daltao</groupId>
             <artifactId>competitive-companion-tester</artifactId>
         </dependency>
+        <dependency>
+            <groupId>daltao</groupId>
+            <artifactId>rust-inliner</artifactId>
+        </dependency>
     </dependencies>
 </project>

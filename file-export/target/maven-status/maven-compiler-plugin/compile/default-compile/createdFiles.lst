@@ -1,2 +1,6 @@
+CopyFile.class
+DeleteExpiredFiles.class
+DeleteFile.class
 ExportEnv.class
 ExportArgs.class
+MoveFile.class

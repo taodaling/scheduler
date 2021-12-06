@@ -16,6 +16,7 @@
         <module>competitive-companion-tester</module>
         <module>cpp-inline</module>
         <module>in-one</module>
+        <module>rust-inliner</module>
     </modules>
 
     <properties>
@@ -79,6 +80,11 @@
             <dependency>
                 <groupId>daltao</groupId>
                 <artifactId>competitive-companion-tester</artifactId>
+                <version>${module.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>daltao</groupId>
+                <artifactId>rust-inliner</artifactId>
                 <version>${module.version}</version>
             </dependency>
         </dependencies>

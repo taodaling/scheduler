@@ -4,6 +4,8 @@ import scheduler.context.Context;
 import scheduler.jobs.Dependency;
 import scheduler.jobs.Job;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public abstract class AbstractTrigger implements Runnable {
@@ -44,12 +46,14 @@ public abstract class AbstractTrigger implements Runnable {
         this.context = context;
     }
 
+
     public static synchronized void execute(Context context, AbstractTrigger trigger) throws Exception {
         System.out.printf("==============trigger [%s]==============", trigger.name).println();
 
         //add necessary header
         Map<String, String> map = new HashMap<>();
-        map.put("timestamp", Long.toString(System.currentTimeMillis()));
+        map.put("_execution_date", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+        map.put("_execution_timestamp", Long.toString(System.currentTimeMillis()));
         map.put("_trigger_name", trigger.name);
         context = Context.inherit(context, map);
 

@@ -24,8 +24,8 @@ public class Scheduler {
         Map<String, String> map = new HashMap<>(System.getenv());
         map.put("_work_directory", System.getProperty("user.dir"));
         String configPath = "scheduler.json";
-        if (args.length > 1) {
-            configPath = args[1];
+        if (args.length > 0) {
+            configPath = args[0];
         }
         File configFile = new File(configPath);
         Preconditions.checkArgument(configFile.exists(), "config file not exist: pass scheduler.json as the second argument");
