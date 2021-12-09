@@ -42,7 +42,7 @@ public class Context implements Cloneable {
     }
 
 
-    static Pattern pattern = Pattern.compile("\\$\\{(.*?)}");
+    static Pattern pattern = Pattern.compile("\\$\\{(.*?)}", Pattern.MULTILINE | Pattern.DOTALL);
 
     public String translate(String s) {
         if(s == null || s.length() == 0){

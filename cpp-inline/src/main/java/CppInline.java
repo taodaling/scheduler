@@ -24,7 +24,7 @@ public class CppInline {
         FileUtils.write(inlineFile, inlineContent);
     }
 
-    private static Pattern pattern = Pattern.compile("#include\\s*?\"(.*?)\"");
+    private static Pattern pattern = Pattern.compile("#include\\s*?\"(.*?)\"", Pattern.MULTILINE | Pattern.DOTALL);
 
     public static String include(File file, List<String> libs, Set<File> set) {
         if (set.contains(file)) {

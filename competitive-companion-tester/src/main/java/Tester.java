@@ -102,7 +102,7 @@ public class Tester {
         }
     }
 
-    static Pattern pattern = Pattern.compile("\\s+");
+    static Pattern pattern = Pattern.compile("\\s+", Pattern.MULTILINE | Pattern.DOTALL);
 
     public static boolean match(String a, String b) {
         String[] asplice = pattern.split(a);

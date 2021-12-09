@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class DeleteExpiredFiles {
     public static void main(String[] args) throws IOException {
-        Pattern pattern = Pattern.compile(System.getenv("file-pattern"));
+        Pattern pattern = Pattern.compile(System.getenv("file-pattern"), Pattern.MULTILINE | Pattern.DOTALL);
         String root = System.getenv("root");
         long now = System.currentTimeMillis();
         long timeSpan = Long.parseLong(System.getenv("expiry"));

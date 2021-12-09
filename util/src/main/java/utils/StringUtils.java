@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtils {
-    public static final Pattern StringPattern = Pattern.compile("\"(\\\\\"|\\\\n|\\\\\\\\|[^\"])*\"");
+    public static final Pattern StringPattern = Pattern.compile("\"(\\\\\"|\\\\n|\\\\\\\\|[^\"])*\"", Pattern.MULTILINE | Pattern.DOTALL);
 
     public static String replace(String text, Pattern pattern, Function<Matcher, String> function) {
         return replace(text, pattern, function, Function.identity());

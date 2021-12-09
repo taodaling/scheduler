@@ -2,4 +2,5 @@ task\Task.class
 task\Test.class
 task\TestResult.class
 Tester$1.class
+Tester$Output.class
 Tester.class

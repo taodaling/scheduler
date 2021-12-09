@@ -12,9 +12,9 @@ public class UseExtractor {
     List<UseStatement> qualification = new ArrayList<>();
     List<String> export = new ArrayList<>();
     String bodyWithoutUse;
-    static Pattern qualificationPattern = Pattern.compile("\\w+(::\\w+)+");
-    static Pattern useStatementPattern = Pattern.compile("use\\s(.*?);");
-    static Pattern publishPattern = Pattern.compile("pub\\s*(\\(crate\\))?\\s*use\\s+[^;]+;");
+    static Pattern qualificationPattern = Pattern.compile("\\w+(::\\w+)+", Pattern.MULTILINE | Pattern.DOTALL);
+    static Pattern useStatementPattern = Pattern.compile("use\\s+(.*?);", Pattern.MULTILINE | Pattern.DOTALL);
+    static Pattern publishPattern = Pattern.compile("pub(\\s*(\\(crate\\))?\\s*|\\s+)use\\s+[^;]+;", Pattern.MULTILINE | Pattern.DOTALL);
     public List<UseStatement> getUseHeader() {
         return useHeader;
     }
@@ -86,29 +86,27 @@ public class UseExtractor {
         return res;
     }
 
-    //use a::{self, b}
+    //use a::{self, b,,}
     private void process0(StringBuilder sb, List<UseStatement> res, CharacterIterator iterator, char exitBy) {
         int len = sb.length();
-        boolean used = false;
         while (iterator.current() != exitBy) {
             if (iterator.current() == '{') {
                 iterator.next();
                 process0(sb, res, iterator, '}');
+                sb.setLength(len);
 //                iterator.next(); //skip }
-                used = true;
             } else if (iterator.current() == ',') {
-                if (!used) {
+                if (sb.length() > len) {
                     res.add(new UseStatement(sb.toString()));
                 }
-                used = false;
                 sb.setLength(len);
-            } else {
+            } else if(!Character.isWhitespace(iterator.current())){
                 sb.append(iterator.current());
             }
             iterator.next();
         }
 
-        if (!used) {
+        if (sb.length() > len) {
             res.add(new UseStatement(sb.toString()));
         }
 
