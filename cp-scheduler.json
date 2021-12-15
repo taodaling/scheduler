@@ -111,7 +111,8 @@
             "commands": "${_changed_filepath}",
             "task-json": "${task-json}",
             "time-out": "10000"
-          }
+          },
+          "timeout": "15000"
         },
         {
           "name": "inline-cpp",

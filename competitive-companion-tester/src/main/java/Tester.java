@@ -3,6 +3,8 @@ import task.Test;
 import utils.*;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
 public class Tester {
+    static List<Process> processes = new CopyOnWriteArrayList<>();
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         String ignoreInteractive = System.getenv("ignore-interactive");
         List<String> commands = CommandUtils.splitCommands(System.getenv("commands"));
@@ -22,23 +25,33 @@ public class Tester {
                 : 10000L;
         Task task = JsonUtils.parse(FileUtils.readFile(inputFile), Task.class);
         if ("true".equals(ignoreInteractive) && task.isInteractive()) {
+            System.out.println("skip interactive task");
             return;
         }
-        ExecutorService executor = Executors.newCachedThreadPool();
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        ExecutorService ioExecutor = Executors.newCachedThreadPool();
         List<Future<Output>> jobs = new ArrayList<>();
         for (Test test : task.getTests()) {
             jobs.add(executor.submit(new Callable<Output>() {
                 @Override
                 public Output call() throws Exception {
                     Process pb = new ProcessBuilder(commands).start();
+                    processes.add(pb);
+                    Future<String> stdout = ioExecutor.submit(() -> {
+                        String s = IOUtils.readAll(pb.getInputStream());
+                        return s;
+                    });
+                    Future<String> stderr = ioExecutor.submit(() -> {
+                        String s = IOUtils.readAll(pb.getErrorStream());
+                        return s;
+                    });
                     org.apache.commons.io.IOUtils.write(test.getInput(), pb.getOutputStream());
                     pb.getOutputStream().flush();
-                    String s = IOUtils.readAll(pb.getInputStream());
-                    String err = IOUtils.readAll(pb.getErrorStream());
+                    Output output = new Output(stdout.get(), stderr.get());
                     if (pb.exitValue() != 0) {
                         return null;
                     }
-                    return new Output(s, err);
+                    return output;
                 }
             }));
         }
@@ -99,6 +112,12 @@ public class Tester {
             System.out.println(failErr);
             System.out.println();
             System.exit(1);
+        }
+
+        for(Process p : processes) {
+            if(p.isAlive()) {
+                p.destroyForcibly();
+            }
         }
     }
 

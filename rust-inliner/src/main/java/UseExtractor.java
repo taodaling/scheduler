@@ -4,6 +4,7 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class UseExtractor {
         return ans;
     }
 
-    public UseExtractor(String content) {
+    public UseExtractor(String content, Set<String> dep) {
         List<String> useHeaderStrs = new ArrayList<>();
         //remove comments
         bodyWithoutUse = new StringCommentHandler().replace(content, new StringCommentHandler.Handler() {
@@ -64,14 +65,20 @@ public class UseExtractor {
                             useHeaderStrs.add(s1.substring(m.start(1), m.end(1)));
                             return "";
                         });
-                StringUtils.replace(s2,
+                String s3 = StringUtils.replace(s2,
                         qualificationPattern,
                         m -> {
                             String body = s2.substring(m.start(), m.end());
                             qualification.add(new UseStatement(body));
-                            return body;
+                            int firstIndex = body.indexOf(':');
+                            String head = body.substring(0, firstIndex);
+                            String tail = body.substring(firstIndex);
+                            if (dep.contains(head)) {
+                                return "crate" + tail;
+                            }
+                            return head + tail;
                         });
-                return s2;
+                return s3;
             }
         });
 
