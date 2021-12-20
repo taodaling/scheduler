@@ -74,6 +74,19 @@
           "frontend": true
         },
         {
+          "name": "Archive stress_external_member.rs",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "MoveFile",
+            "${rust-src}/stress_external_member.rs",
+            "${archive-folder}/${_execution_date}.stress.rs"
+          ],
+          "dependsOn": ["Back up solver.rs"],
+          "frontend": true
+        },
+        {
           "name": "Recover solver.rs",
           "commands": [
             "java",
@@ -82,6 +95,19 @@
             "CopyFile",
             "${work-space}/rust/solver.rs",
             "${rust-src}/solver.rs"
+          ],
+          "dependsOn": ["Archive solver.rs"],
+          "frontend": true
+        },
+        {
+          "name": "Recover stress_external_member.rs",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "CopyFile",
+            "${work-space}/rust/stress_external_member.rs",
+            "${rust-src}/stress_external_member.rs"
           ],
           "dependsOn": ["Archive solver.rs"],
           "frontend": true
@@ -96,24 +122,6 @@
         "interval": 1000
       },
       "jobs": [
-        {
-          "name": "verify",
-          "commands": [
-            "java",
-            "-cp",
-            "${cp}/*",
-            "Tester"
-          ],
-          "dependsOn": [],
-          "frontend": "true",
-          "env": {
-            "ignore-interactive": "true",
-            "commands": "${_changed_filepath}",
-            "task-json": "${task-json}",
-            "time-out": "10000"
-          },
-          "timeout": "15000"
-        },
         {
           "name": "inline-cpp",
           "commands": [
@@ -176,6 +184,24 @@
           ],
           "dependsOn": ["copy rust inline to fort"],
           "frontend": true
+        },
+        {
+          "name": "verify",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "Tester"
+          ],
+          "dependsOn": [],
+          "frontend": "true",
+          "env": {
+            "ignore-interactive": "true",
+            "commands": "${_changed_filepath}",
+            "task-json": "${task-json}",
+            "time-out": "10000"
+          },
+          "timeout": "15000"
         }
       ]
     }

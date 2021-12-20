@@ -48,7 +48,7 @@ public abstract class AbstractTrigger implements Runnable {
 
 
     public static synchronized void execute(Context context, AbstractTrigger trigger) throws Exception {
-        System.out.printf("==============trigger [%s]==============", trigger.name).println();
+        System.out.printf("\n==============trigger [%s] start==============", trigger.name).println();
 
         //add necessary header
         Map<String, String> map = new HashMap<>();
@@ -93,6 +93,9 @@ public abstract class AbstractTrigger implements Runnable {
                 }
             }
         }
+
+
+        System.out.printf("\n------------trigger [%s] end------------", trigger.name).println();
     }
 
 
