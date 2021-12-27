@@ -6,7 +6,7 @@ It's a framework for multi purpose. You can regard it as an extendable competitv
 - Download task metadata from competitive-companion
 - Test your code against those tests included in task metadata
 
-It only supports C++ for now, I'd like to add support for Rust too.
+It supports C++, Rust for now.
 
 # How to use
 
@@ -25,3 +25,7 @@ Then launch the Scheduler
 # C++
 
 The inline facility is implemented in such way: Replacing all the header surrounded by double quotes with matching file. 
+
+# Rust
+
+The inline facility is achieved by Regular expression, it finds all the used libraries and inline needed mod into same file. But the inline mechanism requires some constraints on your code.
