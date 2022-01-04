@@ -46,7 +46,7 @@ public class Tester {
                         return s;
                     });
                     org.apache.commons.io.IOUtils.write(test.getInput(), pb.getOutputStream());
-                    pb.getOutputStream().flush();
+                    pb.getOutputStream().close();
                     Output output = new Output(stdout.get(), stderr.get());
                     if (pb.exitValue() != 0) {
                         return null;
