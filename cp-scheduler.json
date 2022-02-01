@@ -16,7 +16,7 @@
       "type": "scheduler.triggers.Web",
       "env": {
         "port": "50823",
-        "rust-src": "${rust-main-proj}/src/"
+        "cpp-src": "${cpp-work-space}"
       },
       "jobs": [
         {
@@ -47,69 +47,70 @@
             "body": "${_request_body}"
           }
         },
+
         {
-          "name": "Back up solver.rs",
+          "name": "Back up solver.cpp",
           "commands": [
             "java",
             "-cp",
             "${cp}/*",
             "CopyFile",
-            "${rust-src}/solver.rs",
-            "${rust-src}/solver.rs.bak"
+            "${cpp-src}/solver.cpp",
+            "${cpp-src}/solver.cpp.bak"
           ],
           "dependsOn": ["Generate task.json"],
           "frontend": true
         },
         {
-          "name": "Archive solver.rs",
+          "name": "Archive solver.cpp",
           "commands": [
             "java",
             "-cp",
             "${cp}/*",
             "MoveFile",
-            "${rust-src}/solver.rs",
-            "${archive-folder}/${_execution_date}.rs"
+            "${cpp-src}/solver.cpp",
+            "${archive-folder}/${_execution_date}.cpp"
           ],
-          "dependsOn": ["Back up solver.rs"],
+          "dependsOn": ["Back up solver.cpp"],
           "frontend": true
         },
         {
-          "name": "Archive stress_external_member.rs",
+          "name": "Archive stress_external_member.cpp",
           "commands": [
             "java",
             "-cp",
             "${cp}/*",
             "MoveFile",
-            "${rust-src}/stress_external_member.rs",
-            "${archive-folder}/${_execution_date}.stress.rs"
+            "${cpp-src}/stress_external_member.cpp",
+            "${archive-folder}/${_execution_date}.stress.cpp"
           ],
-          "dependsOn": ["Back up solver.rs"],
+          "dependsOn": ["Back up solver.cpp"],
           "frontend": true
         },
         {
-          "name": "Recover solver.rs",
+          "name": "Recover solver.cpp",
           "commands": [
             "java",
             "-cp",
             "${cp}/*",
             "CopyFile",
-            "${work-space}/rust/solver.rs",
-            "${rust-src}/solver.rs"
+            "${work-space}/cpp/solver.cpp",
+            "${cpp-src}/solver.cpp"
           ],
-          "dependsOn": ["Archive solver.rs"],
+          "dependsOn": ["Archive solver.cpp"],
           "frontend": true
         },
         {
-          "name": "Recover stress_external_member.rs",
+          "name": "Recover stress_external_member.cpp",
           "commands": [
             "java",
             "-cp",
             "${cp}/*",
             "CopyFile",
-            "${work-space}/rust/stress_external_member.rs",
-            "${rust-src}/stress_external_member.rs"
+            "${work-space}/cpp/stress_external_member.cpp",
+            "${cpp-src}/stress_external_member.cpp"
           ],
-          "dependsOn": ["Archive solver.rs"],
+          "dependsOn": ["Archive solver.cpp"],
           "frontend": true
         }
       ]
@@ -142,109 +143,43 @@
         }
       ]
     },
+
+
     {
-      "name": "Leetcode-Main-File-Monitor",
+      "name": "Cppcp-Solver-File-Monitor",
       "type": "scheduler.triggers.FileEvent",
       "env": {
-        "filenames": "${leetcode-work-space}/src/main.rs",
+        "filenames": "${cpp-work-space}/main.cpp,${cpp-work-space}/solver.cpp",
         "interval": 1000
       },
       "jobs": [
         {
-          "name": "inline-rust",
+          "name": "inline-cpp",
           "commands": [
             "java",
             "-cp",
             "${cp}/*",
-            "RustInline",
-            "${leetcode-work-space}",
-            "${leetcode-work-space}/inline.rs"
+            "CppInline"
           ],
+          "env": {
+            "main-file": "${cpp-work-space}/main.cpp",
+            "inline-file": "${cpp-inline-file}",
+            "ignore-list": "${cpp-work-space}/internal/debug_impl.cpp,${cpp-work-space}/internal/timer_impl.cpp,${cpp-work-space}/stress.cpp"
+          },
           "dependsOn": [],
-          "frontend": true
-        },
-        {
-          "name": "format inline",
-          "commands": [
-            "rustfmt",
-            "${leetcode-work-space}/inline.rs"
-          ],
-          "dependsOn": ["inline-rust"],
-          "frontend": true
-        },
-        {
-          "name": "copy-rust-inline",
-          "commands": [
-            "java",
-            "-cp",
-            "${cp}/*",
-            "CopyFile",
-            "${leetcode-work-space}/inline.rs",
-            "${rust-inline-file}"
-          ],
-          "dependsOn": ["format inline"],
-          "frontend": true
-        }
-      ]
-    },
-    {
-      "name": "Contest-Solver-File-Monitor",
-      "type": "scheduler.triggers.FileEvent",
-      "env": {
-        "filenames": "${rust-main-proj}/src/solver.rs",
-        "interval": 1000
-      },
-      "jobs": [
-        {
-          "name": "inline-rust",
-          "commands": [
-            "java",
-            "-cp",
-            "${cp}/*",
-            "RustInline",
-            "${rust-main-proj}",
-            "${rust-main-proj}/inline.rs"
-          ],
-          "dependsOn": [],
-          "frontend": true
-        },
-        {
-          "name": "format inline",
-          "commands": [
-            "rustfmt",
-            "${rust-main-proj}/inline.rs"
-          ],
-          "dependsOn": ["inline-rust"],
-          "frontend": true
-        },
-        {
-          "name": "copy-rust-inline",
-          "commands": [
-            "java",
-            "-cp",
-            "${cp}/*",
-            "CopyFile",
-            "${rust-main-proj}/inline.rs",
-            "${rust-inline-file}"
-          ],
-          "dependsOn": ["format inline"],
           "frontend": true
         }
       ]
     }
   ],
   "env": {
-    "cpp-work-space": "F:/geany",
+    "cpp-work-space": "F:/sourcecode/cppcp",
     "cpp-main-file": "${cpp-work-space}/main.cpp",
     "cpp-inline-file": "${work-space}/cpp/inline.cpp",
-    "rust-work-space": "F:/sourcecode/rustcp",
-    "rust-main-proj": "${rust-work-space}/contest",
-    "rust-inline-file": "${work-space}/rust/inline.rs",
-    "exe": "${cpp-work-space}/main.exe,${rust-work-space}/target/debug/contest.exe",
     "work-space": "D:/competitve-programming",
     "archive-folder": "${work-space}/archive",
     "task-json": "${work-space}/tasks/task.json",
     "cp": "F:/sourcecode/pipelien/libs",
-    "leetcode-work-space": "F:/sourcecode/rustcp/leetcode"
+    "exe": "${cpp-work-space}/main.exe"
   }
 }

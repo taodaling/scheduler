@@ -37,7 +37,7 @@ public class FileUtils {
     }
 
     public static String concatPath(String a, String b){
-        if(a.endsWith(File.pathSeparator)){
+        if(a.endsWith(File.pathSeparator) || a.isEmpty()){
             return a + b;
         }
         return a + "/" + b;
