@@ -89,10 +89,12 @@ public class Tester {
                     console.green("" + i + "\t: PASSED");
                 } else {
                     console.red("" + i + "\t: WRONG ANSWER");
-                    failInput = task.getTests().get(i).getInput();
-                    failOutput = future.get().stdout;
-                    failErr = future.get().stderr;
-                    failExpect = task.getTests().get(i).getOutput();
+                    if (failInput == null) {
+                        failInput = task.getTests().get(i).getInput();
+                        failOutput = future.get().stdout;
+                        failErr = future.get().stderr;
+                        failExpect = task.getTests().get(i).getOutput();
+                    }
                 }
             }
             System.out.println();
@@ -124,8 +126,8 @@ public class Tester {
     static Pattern pattern = Pattern.compile("\\s+", Pattern.MULTILINE | Pattern.DOTALL);
 
     public static boolean match(String a, String b) {
-        String[] asplice = pattern.split(a);
-        String[] bsplice = pattern.split(b);
+        String[] asplice = Arrays.stream(pattern.split(a)).filter(x -> x.length() > 0).toArray(i -> new String[i]);
+        String[] bsplice = Arrays.stream(pattern.split(b)).filter(x -> x.length() > 0).toArray(i -> new String[i]);
         return Arrays.equals(asplice, bsplice);
     }
 

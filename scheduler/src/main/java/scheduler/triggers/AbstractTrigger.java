@@ -95,7 +95,7 @@ public abstract class AbstractTrigger implements Runnable {
         }
 
 
-        System.out.printf("\n------------trigger [%s] end------------", trigger.name).println();
+        //System.out.printf("\n------------trigger [%s] end------------", trigger.name).println();
     }
 
 
