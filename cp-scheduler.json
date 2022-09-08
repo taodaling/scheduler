@@ -114,7 +114,7 @@
             "-cp",
             "${cp}/*",
             "CopyFile",
-            "${work-space}/cpp/solver.cpp",
+            "${cpp-src}/template/solver.cpp",
             "${cpp-src}/solver.cpp"
           ],
           "dependsOn": ["Archive solver.cpp"],
@@ -127,7 +127,7 @@
             "-cp",
             "${cp}/*",
             "CopyFile",
-            "${work-space}/cpp/stress_external_member.cpp",
+            "${cpp-src}/template/stress_external_member.cpp",
             "${cpp-src}/stress_external_member.cpp"
           ],
           "dependsOn": ["Archive solver.cpp"],
@@ -151,12 +151,31 @@
             "${cp}/*",
             "Tester"
           ],
-          "dependsOn": [],
+          "dependsOn": ["verify-local!"],
           "frontend": "true",
           "env": {
             "ignore-interactive": "true",
             "commands": "${_changed_filepath}",
             "task-json": "${task-json}",
+            "time-out": "10000"
+          },
+          "timeout": "15000"
+        },
+        {
+          "name": "verify-local",
+          "commands": [
+            "java",
+            "-cp",
+            "${cp}/*",
+            "LocalTester"
+          ],
+          "dependsOn": [],
+          "frontend": "true",
+          "env": {
+            "test-db": "${work-space}/testcases",
+            "commands": "${_changed_filepath}",
+            "inputSuffix": ".in",
+            "outputSuffix": ".out",
             "time-out": "10000"
           },
           "timeout": "15000"

@@ -25,7 +25,8 @@ public class IOUtils {
                 bao.write(buf, 0, len);
             }
         } catch (Exception e) {
-            ErrorUtils.throwAsRuntimeException(e);
+            e.printStackTrace();
+            //ErrorUtils.throwAsRuntimeException(e);
         }
         return ans;
     }
